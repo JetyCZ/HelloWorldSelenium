@@ -1,15 +1,14 @@
 package net.jetensky.twa;
 
+import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class ObjectWithWebDriverParent {
 
-    private static Logger log = LoggerFactory.getLogger(ObjectWithWebDriverParent.class);
+    final static Logger log = Logger.getLogger(ObjectWithWebDriverParent.class);
     protected WebDriver driver;
 
 
@@ -47,7 +46,13 @@ public abstract class ObjectWithWebDriverParent {
 
     public static WebElement waitForElementPresenceOnPage(By by, int timeoutInSeconds, WebDriver driverToUse) {
       ExpectedCondition<WebElement> elementCondition = d -> d.findElement(by);
-      return (new WebDriverWait(driverToUse, timeoutInSeconds)).until(elementCondition);
+        try {
+            log.debug("WaitForElementPresenceOnPage:" + by);
+            return (new WebDriverWait(driverToUse, timeoutInSeconds)).until(elementCondition);
+        } catch (Exception e) {
+            log.error("WaitForElementPresenceOnPage:" + by + " failed", e);
+            throw e;
+        }
     }
 
     protected static void waitUntil(ExpectedCondition<Boolean> conditionToMeet, int timeOutInSeconds, WebDriver driver) {
@@ -60,19 +65,22 @@ public abstract class ObjectWithWebDriverParent {
       //  element.click();
       // So using javascript click instead
 
+        log.debug("Executing click javascript on element: " + element.getText() + ", wait for page=" + waitForPageToLoad);
       ((JavascriptExecutor) driverToUse).executeScript("arguments[0].click();", element);
 
       if (waitForPageToLoad) {
+        log.debug("Waiting for page to load");
         WebElement finalElement = element;
+        By does_not_matter = By.id("does_not_matter");
         waitUntil(input -> {
           try {
-            finalElement.findElement(By.id("does_not_matter"));
+              finalElement.findElement(does_not_matter);
             return false;
           } catch (StaleElementReferenceException e) {
-            log.debug("StaleElementReferenceException");
+            log.debug("StaleElementReferenceException - finally new page");
             return true;
           } catch (NoSuchElementException e) {
-            log.debug("NoSuchElementException");
+            log.debug("NoSuchElementException for " + does_not_matter);
             return false;
           }
         }, 30, driverToUse);
@@ -114,7 +122,9 @@ public abstract class ObjectWithWebDriverParent {
 
       waitUntil(d -> {
           try {
+              log.debug("Waiting for element: " + elementBy);
               WebElement element = waitForElement(elementBy, 30, driverToUse);
+              log.debug("Element found, clicking it: " + elementBy);
               clickElement(element, driverToUse, waitForPageToLoad);
               return true;
           } catch (StaleElementReferenceException e) {

@@ -12,8 +12,7 @@ public class TestUtil {
         indexPage.typeEmail("pavel.jetensky@seznam.cz");
         indexPage.typePassword("stromlze");
 
-        Thread.sleep(1000);
-
+        Thread.sleep(300);
         indexPage.submitLoginForm();
     }
 }

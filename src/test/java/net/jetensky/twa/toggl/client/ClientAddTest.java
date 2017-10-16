@@ -16,8 +16,12 @@ public class ClientAddTest extends JUnitTestBase {
   private IndexPage indexPage;
   private ClientsPage clientsPage;
 
+
+
   @Before
   public void initPageObjects() {
+    String jenkins;
+
     indexPage = new IndexPage(driver);
     clientsPage = new ClientsPage(driver);
   }

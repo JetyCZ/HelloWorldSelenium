@@ -27,12 +27,14 @@ public class ClientAddTest extends JUnitTestBase {
   }
 
   @Test
-  public void testLogIn() throws InterruptedException {
+  public void testAddClient() throws InterruptedException {
     TestUtil.loginTestUser(driver, indexPage);
 
+    Thread.sleep(300);
     indexPage.clickLeftMenuItem("Clients");
 
     String clientName = clientsPage.typeClientName("TEST" + RandomStringUtils.randomAlphanumeric(4));
+    Thread.sleep(300);
     clientsPage.clickAddButton(By.xpath("//button[text()='Add']"));
     By deleteIconBy = clientsPage.clickDeleteIcon(clientName);
     clientsPage.clickDeleteButton();

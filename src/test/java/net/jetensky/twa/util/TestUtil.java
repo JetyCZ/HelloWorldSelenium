@@ -1,12 +1,19 @@
 package net.jetensky.twa.util;
 
+import net.jetensky.twa.ObjectWithWebDriverParent;
 import net.jetensky.twa.pages.IndexPage;
-import org.openqa.selenium.WebDriver;
+import net.jetensky.twa.pages.MainPage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class TestUtil {
+@Component
+public class TestUtil extends ObjectWithWebDriverParent{
 
-    public static void loginTestUser(WebDriver driver, IndexPage indexPage) throws InterruptedException {
-        driver.get("http://toggl.com");
+    @Autowired IndexPage indexPage;
+    @Autowired MainPage mainPage;
+
+    public MainPage loginTestUser() throws InterruptedException {
+        driver().get("http://toggl.com");
 
         indexPage.clickLogin();
         indexPage.typeEmail("pavel.jetensky@seznam.cz");
@@ -14,5 +21,6 @@ public class TestUtil {
 
         Thread.sleep(300);
         indexPage.submitLoginForm();
+        return mainPage;
     }
 }

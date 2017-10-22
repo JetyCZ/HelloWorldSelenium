@@ -1,51 +1,40 @@
 package net.jetensky.twa;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.rules.ExternalResource;
-import org.openqa.selenium.*;
-import ru.stqa.selenium.factory.WebDriverPool;
-
-import java.net.URL;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 /**
  * Base class for all the JUnit-based test classes
  */
-public class JUnitTestBase {
-  protected WebDriver driver;
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SeleniumTestCaseContext.class)
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class })
 
-  
+public class JUnitTestBase {
+
+  @Autowired protected WebDriverWrapper driverWrapper;
   static {
     System.setProperty("webdriver.firefox.bin", "/usr/bin/firefox54");
-    // System.setProperty("webdriver.geckodriver.driver",
-    //       "C:\\apps\\geckodriver\\geckodriver.exe");
   }
 
-  protected static URL gridHubUrl;
-  protected static String baseUrl;
-  protected static Capabilities capabilities;
+  @Before
+  public void createNewDriver() {
+    driverWrapper.createNew();
+  }
 
-  @ClassRule
-  public static ExternalResource webDriverProperties = new ExternalResource() {
-    @Override
-    protected void before() throws Throwable {
-      SuiteConfiguration config = new SuiteConfiguration();
-      baseUrl = config.getProperty("site.url");
-      if (config.hasProperty("grid.url") && !"".equals(config.getProperty("grid.url"))) {
-        gridHubUrl = new URL(config.getProperty("grid.url"));
-      }
-      capabilities = config.getCapabilities();
-    };
-  };
+  @After
+  public void quitDriver() {
+      driverWrapper.quit();
+  }
 
-  @Rule
-  public ExternalResource webDriver = new ExternalResource() {
-
-    @Override
-    protected void before() throws Throwable {
-      driver = WebDriverPool.DEFAULT.getDriver(gridHubUrl, capabilities);
-    };
-  };
-
-
+  protected WebDriver driver() {
+      return driverWrapper.get();
+  }
 }

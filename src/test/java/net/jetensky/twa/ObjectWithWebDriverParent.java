@@ -5,15 +5,16 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ObjectWithWebDriverParent {
 
     final static Logger log = Logger.getLogger(ObjectWithWebDriverParent.class);
-    protected WebDriver driver;
 
+    @Autowired protected WebDriverWrapper driverWrapper;
 
-    public ObjectWithWebDriverParent(WebDriver driver) {
-        this.driver = driver;
+    protected WebDriver driver() {
+        return driverWrapper.get();
     }
 
     protected static WebElement waitForElement(By by, int timeoutInSeconds, WebDriver driverToUse) {
@@ -22,12 +23,6 @@ public abstract class ObjectWithWebDriverParent {
       int attemptsRemaining = 10;
       try {
         WebElement element = waitForElementPresenceOnPage(by, timeoutInSeconds, driverToUse);
-
-/*
-        ExpectedCondition<Boolean> displayedCondition = e -> element.isDisplayed();
-        (new WebDriverWait(driverToUse, timeoutInSeconds)).until(displayedCondition);
-*/
-
         return element;
       } catch (UnreachableBrowserException e) {
         if (attemptsRemaining>0) {
@@ -98,22 +93,22 @@ public abstract class ObjectWithWebDriverParent {
         } catch (NoSuchElementException e) {
           return false;
         }
-      }, 30, driver);
+      }, 30, driver());
     }
 
     public WebElement waitForElement(By by) {
-      return waitForElement(by, 60, driver);
+      return waitForElement(by, 60, driver());
     }
 
     /**
      * Waits until element appears in the page DOM (no matter if it is displayed or not)
      */
     public WebElement waitForElementPresenceOnPage(By by, int timeoutInSeconds) {
-      return waitForElementPresenceOnPage(by, timeoutInSeconds, driver);
+      return waitForElementPresenceOnPage(by, timeoutInSeconds, driver());
     }
 
     public void clickElement(By elementBy, boolean waitForPageToLoad) {
-      WebDriver driverToUse = this.driver;
+      WebDriver driverToUse = driver();
       clickElement(elementBy, driverToUse, waitForPageToLoad);
     }
 
@@ -159,11 +154,11 @@ public abstract class ObjectWithWebDriverParent {
     }
 
     public void waitUntil(ExpectedCondition<Boolean> conditionToMeet, int timeOutInSeconds) {
-      (new WebDriverWait(this.driver, timeOutInSeconds)).until(conditionToMeet);
+      (new WebDriverWait(driver(), timeOutInSeconds)).until(conditionToMeet);
     }
 
     public void sendKeys(String value, By inputElementBy) {
-        WebDriver driverToUse = driver;
+        WebDriver driverToUse = driver();
         sendKeys(value, inputElementBy, driverToUse);
     }
 

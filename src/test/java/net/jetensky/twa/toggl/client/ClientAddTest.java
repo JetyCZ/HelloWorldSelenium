@@ -2,43 +2,31 @@ package net.jetensky.twa.toggl.client;
 
 import net.jetensky.twa.JUnitTestBase;
 import net.jetensky.twa.pages.ClientsPage;
-import net.jetensky.twa.pages.IndexPage;
+import net.jetensky.twa.pages.MainPage;
 import net.jetensky.twa.util.TestUtil;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class ClientAddTest extends JUnitTestBase {
 
-
-  private IndexPage indexPage;
-  private ClientsPage clientsPage;
-
-
-
-  @Before
-  public void initPageObjects() {
-    String jenkins;
-
-    indexPage = new IndexPage(driver);
-    clientsPage = new ClientsPage(driver);
-  }
+  @Autowired TestUtil testUtil;
 
   @Test
   public void testAddClient() throws InterruptedException {
-    TestUtil.loginTestUser(driver, indexPage);
+    MainPage mainPage = testUtil.loginTestUser();
 
     Thread.sleep(300);
-    indexPage.clickLeftMenuItem("Clients");
+    ClientsPage clientsPage = mainPage.clickClients();
 
     String clientName = clientsPage.typeClientName("TEST" + RandomStringUtils.randomAlphanumeric(4));
     Thread.sleep(300);
     clientsPage.clickAddButton(By.xpath("//button[text()='Add']"));
     By deleteIconBy = clientsPage.clickDeleteIcon(clientName);
     clientsPage.clickDeleteButton();
-    Assert.assertEquals(0, driver.findElements(deleteIconBy).size());
+    Assert.assertEquals(0, driver().findElements(deleteIconBy).size());
   }
 
 

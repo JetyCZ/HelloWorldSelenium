@@ -2,12 +2,10 @@ package net.jetensky.twa.pages;
 
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ClientsPage extends Page {
-    public ClientsPage(WebDriver driver) {
-        super(driver);
-    }
 
     public void clickDeleteButton() throws InterruptedException {
         Thread.sleep(500);
@@ -18,7 +16,7 @@ public class ClientsPage extends Page {
     public By clickDeleteIcon(String clientName) {
         By deleteIconBy = By.xpath("//span[contains(text(), '" + clientName + "')]/i[@class='fa fa-times']");
         clickElement(deleteIconBy, false);
-        boolean contains = driver.getPageSource().contains("Are you sure you want to delete this client?");
+        boolean contains = driver().getPageSource().contains("Are you sure you want to delete this client?");
         Assert.assertTrue(contains);
         return deleteIconBy;
     }

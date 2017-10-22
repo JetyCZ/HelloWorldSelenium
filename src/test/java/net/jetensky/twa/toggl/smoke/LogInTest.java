@@ -14,5 +14,4 @@ public class LogInTest extends JUnitTestBase {
     testUtil.loginTestUser();
   }
 
-
 }

@@ -21,8 +21,9 @@ public class ClientsPage extends Page {
         return deleteIconBy;
     }
 
-    public void clickAddButton(By xpath) {
+    public ClientsPage clickAddButton(By xpath) {
         clickElement(xpath, false);
+        return this;
     }
 
     public String typeClientName(String clientName) {

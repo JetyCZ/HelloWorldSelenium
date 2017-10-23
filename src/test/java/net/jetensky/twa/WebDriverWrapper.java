@@ -10,6 +10,7 @@ public class WebDriverWrapper {
     private FirefoxDriver webDriver;
 
     public WebDriver get() {
+        if (webDriver ==null) webDriver = new FirefoxDriver();
         return webDriver;
     }
 

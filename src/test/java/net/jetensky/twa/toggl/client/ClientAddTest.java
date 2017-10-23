@@ -2,6 +2,7 @@ package net.jetensky.twa.toggl.client;
 
 import net.jetensky.twa.JUnitTestBase;
 import net.jetensky.twa.pages.ClientsPage;
+import net.jetensky.twa.pages.IndexPage;
 import net.jetensky.twa.pages.MainPage;
 import net.jetensky.twa.util.TestUtil;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -14,10 +15,12 @@ public class ClientAddTest extends JUnitTestBase {
 
   @Autowired TestUtil testUtil;
 
+  @Autowired IndexPage indexPage;
+
   @Test
   public void testAddClient() throws InterruptedException {
     MainPage mainPage = testUtil.loginTestUser();
-
+    
     Thread.sleep(300);
     ClientsPage clientsPage = mainPage.clickClients();
 

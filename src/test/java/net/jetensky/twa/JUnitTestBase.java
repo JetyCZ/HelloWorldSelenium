@@ -2,6 +2,7 @@ package net.jetensky.twa;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 public class JUnitTestBase {
 
   @Autowired protected WebDriverWrapper driverWrapper;
-  static {
+
+  @BeforeClass
+  public static void beforeClass() {
     System.setProperty("webdriver.firefox.bin", "/usr/bin/firefox54");
   }
 
